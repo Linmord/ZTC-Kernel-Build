@@ -244,6 +244,9 @@ jobs:
           echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
 
+          # Force official kernel version string
+          echo \'CONFIG_LOCALVERSION="-android12-9-00047-g4968e29b7f92-ab12786767"\' >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/configs/gki_defconfig
           # Remove check_defconfig
           sed -i 's/check_defconfig//' ./common/build.config.gki
 
@@ -257,6 +260,11 @@ jobs:
 
           echo "5系:删除dirty字符串"
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
+
+
+          # Set official build timestamp and build number for uname
+          echo \'KBUILD_BUILD_TIMESTAMP=Wed Dec 11 21:50:47 UTC 2024\' >> $GITHUB_ENV
+          echo \'KBUILD_BUILD_VERSION=1\' >> $GITHUB_ENV
 
       - name: Build with retry
         uses: nick-fields/retry@v3
