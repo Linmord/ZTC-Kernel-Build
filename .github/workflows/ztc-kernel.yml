@@ -1,7 +1,7 @@
 name: ZTC Kernel Build
 permissions:
-  contents: write  # Allow writing to repository contents (for pushing tags)
-  actions: write   # Allows triggering actions
+  contents: write # Allow writing to repository contents (for pushing tags)
+  actions: write # Allows triggering actions
 
 on:
   workflow_dispatch: # This allows this workflow to be called from another workflow
@@ -18,15 +18,15 @@ jobs:
       - name: Maximize Build Space
         uses: AdityaGarg8/remove-unwanted-software@v5
         with:
-          remove-dotnet: 'true'          # Frees ~2 GB
-          remove-android: 'true'         # Frees ~9 GB
-          remove-haskell: 'true'         # Frees ~5.2 GB
-          remove-codeql: 'true'          # Frees ~5.4 GB
-          remove-docker-images: 'true'   # Frees ~3.2 GB
-          remove-large-packages: 'true'  # Frees ~3.1 GB
-          remove-swapfile: 'true'        # Frees ~4 GB
-          remove-cached-tools: 'false'   # Avoid unless confirmed safe
-          verbose: 'true'                # Enable detailed logging
+          remove-dotnet: "true" # Frees ~2 GB
+          remove-android: "true" # Frees ~9 GB
+          remove-haskell: "true" # Frees ~5.2 GB
+          remove-codeql: "true" # Frees ~5.4 GB
+          remove-docker-images: "true" # Frees ~3.2 GB
+          remove-large-packages: "true" # Frees ~3.1 GB
+          remove-swapfile: "true" # Frees ~4 GB
+          remove-cached-tools: "false" # Avoid unless confirmed safe
+          verbose: "true" # Enable detailed logging
 
       - name: 设定 CONFIG 环境变量
         run: |
@@ -52,9 +52,9 @@ jobs:
 
       - name: 配置 Git
         run: |
-          git config --global user.name "zzh20188"
-          git config --global user.email "BuildGkiKernel@gmail.com"
-      
+          git config --global user.name "Linmord"
+          git config --global user.email "linmod@yeah.net"
+
       - name: 安装仓库
         run: |
           # Install dependencies
@@ -81,7 +81,7 @@ jobs:
           git clone https://github.com/ShirkNeko/SukiSU_patch.git
           # next修复补丁
           git clone https://github.com/zzh20188/GKI_KernelSU_SUSFS.git zzh_patch
-          
+
       - name: 设置 CONFIG 环境变量
         run: |
           # Set CONFIG dynamically based on inputs values
@@ -115,7 +115,7 @@ jobs:
           # ln -s "$(pwd)/clang/clang-r563880" "$(pwd)/prebuilts-master/clang/host/linux-x86/clang-r563880"
           cd common
           sed -i 's|^CLANG_PREBUILT_BIN=.*|CLANG_PREBUILT_BIN=prebuilts-master/clang/host/linux-x86/clang-r563880/bin|' build.config.common
-          
+
       - name: 添加 KernelSU
         run: |
           echo "更改为配置目录: $CONFIG..."
@@ -161,7 +161,7 @@ jobs:
 
           cd ../common
           patch -p1 --fuzz=3 < 50_add_susfs_in_gki-android12-5.10.patch || true
-  
+
       - name: 应用新的HOOKS补丁
         run: |
           echo "更改为配置目录: $CONFIG..."
@@ -177,46 +177,12 @@ jobs:
           # Apply additional patch
           cp ../../SukiSU_patch/69_hide_stuff.patch ./
           patch -p1 -F 3 < 69_hide_stuff.patch
-          
+
       - name: 添加SUSFS配置设置
         run: |
           echo "更改为配置目录: $CONFIG..."
           cd "$CONFIG"
 
-          # echo "CONFIG_CC_HAVE_SHADOW_CALL_STACK=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_CC_HAS_BRANCH_PROT_PAC_RET=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_CC_HAS_SIGN_RETURN_ADDRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_AS_HAS_CFI_NEGATE_RA_STATE=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_CC_HAS_BRANCH_PROT_PAC_RET_BTI=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_ARM64_AS_HAS_MTE=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_ARM64_MTE=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_CC_HAVE_STACKPROTECTOR_SYSREG=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_ARCH_SUPPORTS_SHADOW_CALL_STACK=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_SHADOW_CALL_STACK=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # # clang
-          # echo "CONFIG_LTO=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_LTO_CLANG=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_HAS_LTO_CLANG=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_LTO_CLANG_FULL=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_CFI_CLANG=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_CFI_CLANG_SHADOW=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # echo "CONFIG_TRIM_UNUSED_KSYMS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_ARCH_USES_HIGH_VMA_FLAGS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_HAVE_ARCH_KASAN_HW_TAGS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_KASAN_HW_TAGS=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # # MTK
-          # echo "CONFIG_MEDIATEK_CPUFREQ_DEBUG=m" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_MTK_IPI=m" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_MTK_TINYSYS_MCUPM_SUPPORT=m" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_MTK_MBOX=m" >> ./common/arch/arm64/configs/gki_defconfig
-          # echo "CONFIG_RPMSG_MTK=m" >> ./common/arch/arm64/configs/gki_defconfig
-          
-          # 以上和此处是关闭一些疑似导致自动重启的配置
-         
-          
           echo "Adding configuration settings to gki_defconfig..."
 
           # Add KSU configuration settings
@@ -226,7 +192,6 @@ jobs:
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
 
-          
           # Add SUSFS configuration settings
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -243,21 +208,46 @@ jobs:
           echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          
+
           # Remove check_defconfig
           sed -i 's/check_defconfig//' ./common/build.config.gki
 
           # 用于debug config
           tail -n 60 ./common/arch/arm64/configs/gki_defconfig
 
-      - name: 配置内核构时间/删除dirty字符
+      - name: 配置内核构建/保持官方版本信息
         run: |
           echo "更改为配置目录: $CONFIG..."
           cd "$CONFIG"
 
-          echo "5系:删除dirty字符串"
+          echo "删除dirty字符串，保持与官方一致"
           sed -i 's/-dirty//' ./common/scripts/setlocalversion
-          
+
+          # 确保没有额外的版本后缀
+          echo "确保使用纯净的版本信息"
+          rm -f ./common/localversion 2>/dev/null || true
+          rm -f ./common/.scmversion 2>/dev/null || true
+
+          # 恢复任何可能被修改的版本文件
+          git -C ./common checkout -- init/version.c 2>/dev/null || true
+          git -C ./common checkout -- Makefile 2>/dev/null || true
+
+      - name: 验证内核版本信息
+        run: |
+          echo "验证内核版本信息是否与官方一致..."
+          cd "$CONFIG/common"
+
+          # 获取纯净的版本信息
+          ORIGINAL_VERSION=$(make -s kernelversion 2>/dev/null || echo "无法获取版本")
+          echo "原始版本: $ORIGINAL_VERSION"
+
+          # 检查是否包含自定义后缀
+          if echo "$ORIGINAL_VERSION" | grep -q -- "-ztc\|-custom\|-mod"; then
+            echo "发现自定义后缀，正在清理..."
+            git checkout -- Makefile 2>/dev/null || true
+            rm -f localversion .scmversion 2>/dev/null || true
+            echo "已清理自定义后缀"
+          fi
 
       - name: Build with retry
         uses: nick-fields/retry@v3
@@ -272,17 +262,26 @@ jobs:
 
             echo "Building the kernel..."
             LTO=thin KCFLAGS="-O3" BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC=clang || exit 1
-            
+
       - name: 修补 Image 文件 安卓12和安卓13(仅限sukisu)
         run: |
-            echo "Patching Image file..."
-            cd "$CONFIG/out/android12-5.10/dist"
-            strings Image | grep "Linux version"
-            curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux" -o patch
-            chmod 777 patch
-            ./patch
-            rm -rf Image
-            mv oImage Image
+          echo "Patching Image file..."
+          cd "$CONFIG/out/android12-5.10/dist"
+          strings Image | grep "Linux version"
+          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux" -o patch
+          chmod 777 patch
+          ./patch
+          rm -rf Image
+          mv oImage Image
+
+      - name: 验证最终版本信息
+        run: |
+          echo "验证最终内核版本信息..."
+          cd "$CONFIG/out/android12-5.10/dist"
+
+          # 检查编译后的内核版本信息
+          strings Image | grep "Linux version" | head -1
+          echo "内核版本信息应与官方完全一致，无自定义后缀"
 
       - name: 创建Bootimgs文件夹并复制镜像
         run: |
@@ -298,16 +297,20 @@ jobs:
           # Create gzip of the Image file
           gzip -n -k -f -9 ./Image > ./Image.gz
 
-
-      - name: 创建不同格式的ZIP文件
+      - name: 配置 AnyKernel3 使用原始信息
         run: |
-          echo "Creating zip files for all formats..."
+          echo "配置 AnyKernel3 使用原始内核信息..."
           cd ./AnyKernel3
 
-          # Create and upload zip for each format
-          ZIP_NAME="ZTC-AnyKernel3.zip"
-          echo "Creating zip file: $ZIP_NAME..."
-          mv ../Image ./Image
+          # 使用通用设置，避免显示自定义信息
+          sed -i "s/kernel.string=.*/kernel.string=Linux Kernel/" anykernel.sh
+          sed -i "s/kernel.version=.*/kernel.version=Official GKI Build/" anykernel.sh
+
+          # 移除自定义banner（如果存在）
+          rm -f banner 2>/dev/null || true
+
+          # 移动内核镜像
+          mv ../Image ./
 
       - name: 添加 KernelSU
         id: add_KSU
@@ -318,7 +321,7 @@ jobs:
 
           FILENAME="build-manager.yml"
           KSUM="manager"
-          
+
           # 初始化
           NUMBER=0
           DOWNLOAD_URL=""
@@ -351,18 +354,18 @@ jobs:
               NUMBER=$((NUMBER + 1))
             else
               echo "$result"
-              DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name == "'"$KSUM"'") | .archive_download_url')
+              DOWNLOAD_URL=$(echo "$ARTIFACts" | jq -r '.artifacts[] | select(.name == "'"$KSUM"'") | .archive_download_url')
               break
             fi
 
           done
-          
+
           # 下载 Manager 文件
           curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o "SUKISU-管理器(${{ env.KSU_VERSION }}).zip" "$DOWNLOAD_URL"
           echo "Manager 文件已下载为：SUKISU-管理器(${{ env.KSU_VERSION }}).zip"
           unzip *.zip
           rm -rf *.zip
-  
+
       - name: 添加 SUSFS 模块
         id: add_SUSFS
         continue-on-error: true
@@ -379,17 +382,16 @@ jobs:
           NAME=$(echo "$ARTIFACTS" | jq -r '.artifacts[0].name')
           echo "SUSFS_NAME=$NAME" >> $GITHUB_ENV
           NAME="susfs-$NAME.zip"
-          
+
           echo $DOWNLOAD_URL
           echo $NAME
           # 下载 Manager 文件
           curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o "$NAME" "$DOWNLOAD_URL"
           echo "$NAME 文件已下载.zip"         
-          
+
           echo "正在检查调用者: ${{ github.caller_workflow }}"
 
           # 由用户调用或是由作者上传到release?
-
           if [ "${{ github.workflow }}" == "测试发布" ]; then
             echo "这是测试发布工作流"
             mkdir -p susfs-module && mv $NAME susfs-module
@@ -397,7 +399,7 @@ jobs:
             echo "这是其他工作流"
             mkdir -p susfs-module && unzip *.zip -d susfs-module
           fi
-      
+
       - name: 上传编译资产 (仅 AK3)
         uses: actions/upload-artifact@v4
         with:
@@ -410,7 +412,7 @@ jobs:
           name: Sukisu-Manager(${{ env.KSU_VERSION }})
           path: |
             *.apk
-  
+
       - name: 上传SUSFS模块
         uses: actions/upload-artifact@v4
         with:
